@@ -14,6 +14,8 @@ class RemoteControlTest {
     private static Light kitchenLight;
     private static CeilingFan livingRoomCeilingFan;
     private static Stereo livingRoomStereo;
+    private static MultiSpeedCeilingFan bedRoomCeilingFan;
+
 
     @BeforeAll
     static void init() {
@@ -34,10 +36,10 @@ class RemoteControlTest {
         // TODO
         // other slots are set NoCommand
         // extend them later
-        remoteControl.setCommand(4, new NoCommand(), new NoCommand());
-        remoteControl.setCommand(5, new NoCommand(), new NoCommand());
-        remoteControl.setCommand(6, new NoCommand(), new NoCommand());
-
+        bedRoomCeilingFan = new MultiSpeedCeilingFan("BedRoom");
+        remoteControl.setCommand(4, new MultiSpeedCeilingFanLowCommand(bedRoomCeilingFan), new MultiSpeedCeilingFanOffCommand(bedRoomCeilingFan));
+        remoteControl.setCommand(5, new MultiSpeedCeilingFanMediumCommand(bedRoomCeilingFan), new MultiSpeedCeilingFanOffCommand(bedRoomCeilingFan));
+        remoteControl.setCommand(6, new MultiSpeedCeilingFanHighCommand(bedRoomCeilingFan), new MultiSpeedCeilingFanOffCommand(bedRoomCeilingFan));
     }
 
     @Test
@@ -124,5 +126,104 @@ class RemoteControlTest {
 
         remoteControl.offButtonWasPressed(3);
         assertThat(livingRoomStereo.isOn()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Turn on and Undo living room light")
+    void turnOnAndUndoLivingRoomLight() {
+
+        assertThat(livingRoomLight.getName()).isEqualTo("LivingRoom");
+
+        remoteControl.onButtonWasPressed(0);
+        assertThat(livingRoomLight.isOn()).isTrue();
+
+        remoteControl.undoButtonWasPressed();
+        assertThat(livingRoomLight.isOn()).isFalse();
+
+    }
+
+    @Test
+    @DisplayName("Turn off and Undo living room light")
+    void turnOffAndUndoLivingRoomLight() {
+
+        assertThat(livingRoomLight.getName()).isEqualTo("LivingRoom");
+
+        remoteControl.offButtonWasPressed(0);
+        assertThat(livingRoomLight.isOn()).isFalse();
+
+        remoteControl.undoButtonWasPressed();
+        assertThat(livingRoomLight.isOn()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Turn on and Undo living room ceiling fan")
+    void turnOnAndUndoLivingRoomCeilingFan() {
+        assertThat(livingRoomCeilingFan.getName()).isEqualTo("LivingRoom");
+
+        remoteControl.onButtonWasPressed(2);
+        assertThat(livingRoomCeilingFan.isOn()).isTrue();
+
+        remoteControl.undoButtonWasPressed();
+        assertThat(livingRoomCeilingFan.isOn()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Turn off and undo living room ceiling fan")
+    void turnOffAndUndoLivingRoomCeilingFan() {
+        assertThat(livingRoomCeilingFan.getName()).isEqualTo("LivingRoom");
+
+        remoteControl.offButtonWasPressed(2);
+        assertThat(livingRoomCeilingFan.isOn()).isFalse();
+
+        remoteControl.undoButtonWasPressed();
+        assertThat(livingRoomCeilingFan.isOn()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Turn on and Undo living room stereo")
+    void turnOnAndUndoLivingStereo() {
+        assertThat(livingRoomStereo.getName()).isEqualTo("LivingRoom");
+
+        remoteControl.onButtonWasPressed(3);
+        assertThat(livingRoomStereo)
+                .matches(s -> "CD".equals(s.getPlayMode()), "Play Mode")
+                .matches(s -> s.isOn(), "isOn");
+
+        remoteControl.undoButtonWasPressed();
+        assertThat(livingRoomStereo.isOn()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Turn off and Undo living room stereo")
+    void turnOffAndUndoLivingStereo() {
+        assertThat(livingRoomStereo.getName()).isEqualTo("LivingRoom");
+
+        remoteControl.offButtonWasPressed(3);
+        assertThat(livingRoomStereo.isOn()).isFalse();
+
+        remoteControl.undoButtonWasPressed();
+        assertThat(livingRoomStereo)
+                .matches(s -> "CD".equals(s.getPlayMode()), "Play Mode")
+                .matches(s -> s.isOn(), "isOn");
+    }
+
+    @Test
+    @DisplayName("Turn low and Off and Undo and Medium and Undo bed room multi-speed ceiling fan")
+    void turnLowAndOffAndUndoAndMediumAndUndoBedRoomCeilingFan() {
+        remoteControl.onButtonWasPressed(4);
+        assertThat(bedRoomCeilingFan.getSpeed()).isEqualTo(MultiSpeedCeilingFan.LOW);
+
+        remoteControl.offButtonWasPressed(4);
+        assertThat(bedRoomCeilingFan.getSpeed()).isEqualTo(MultiSpeedCeilingFan.OFF);
+
+        remoteControl.undoButtonWasPressed();
+        assertThat(bedRoomCeilingFan.getSpeed()).isEqualTo(MultiSpeedCeilingFan.LOW);
+
+        remoteControl.onButtonWasPressed(5);
+        assertThat(bedRoomCeilingFan.getSpeed()).isEqualTo(MultiSpeedCeilingFan.MEDIUM);
+
+        remoteControl.undoButtonWasPressed();
+        assertThat(bedRoomCeilingFan.getSpeed()).isEqualTo(MultiSpeedCeilingFan.LOW);
+
     }
 }

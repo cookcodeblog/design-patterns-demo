@@ -1,9 +1,11 @@
 package cn.xdevops.designpatterns.command;
 
-public class CeilingFan {
 
+
+public class CeilingFan {
     private boolean isOn;
     private String name;
+
 
     public CeilingFan(String name) {
         this.name = name;
@@ -26,4 +28,6 @@ public class CeilingFan {
     public String getName() {
         return name;
     }
+
+
 }
