@@ -226,4 +226,5 @@ class RemoteControlTest {
         assertThat(bedRoomCeilingFan.getSpeed()).isEqualTo(MultiSpeedCeilingFan.LOW);
 
     }
+
 }

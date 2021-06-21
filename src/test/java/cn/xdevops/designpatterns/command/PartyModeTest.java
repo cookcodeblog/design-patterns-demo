@@ -56,4 +56,5 @@ public class PartyModeTest {
         assertThat(hottub.isOn()).isFalse();
 
     }
+
 }
