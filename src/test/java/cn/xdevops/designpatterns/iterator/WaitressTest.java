@@ -13,7 +13,8 @@ class WaitressTest {
     void shouldPrintAllMenus() {
         Menu pancakeHouseMenu = new PancakeHouseMenu();
         Menu dinerMenu = new DinerMenu();
-        Waitress waitress = new Waitress(pancakeHouseMenu, dinerMenu);
+        Menu cafeMenu = new CafeMenu();
+        Waitress waitress = new Waitress(pancakeHouseMenu, dinerMenu, cafeMenu);
         waitress.printMenu();
     }
 }
